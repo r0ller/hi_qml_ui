@@ -1,7 +1,7 @@
 #include "messageboard.h"
 #include <QJsonDocument>
 #ifdef __NATIVE__
-#include "receiver.h"
+//#include "receiver.h"
 #endif
 
 #ifdef __NODEJS__
@@ -42,11 +42,27 @@ messageboard::messageboard(QObject *parent) : QObject(parent)
 bool messageboard::sendMessage(const QJsonObject& cmdObj) {
     lastCmdObj=cmdObj;
     #ifdef __NATIVE__
-        qDebug() << "Called the C++ method with" << msg;
-        QObject* obj=messageboard::rootObject->findChild<QObject*>("mousearea");
-        qDebug()<<obj->objectName();
-        const char* response=execute(msg.toStdString().c_str());
-        QMetaObject::invokeMethod(obj,"clickReturn",Q_ARG(QString, QString(response)));
+        //qDebug() << "Called the C++ method with" << msg;
+        //QObject* obj=messageboard::rootObject->findChild<QObject*>("mouseArea");
+        //qDebug()<<obj->objectName();
+        //const char* response=execute(msg.toStdString().c_str());
+        //QMetaObject::invokeMethod(obj,"msgIn",Q_ARG(QString, QString(response)));
+        QString response="";
+        if(clickCounter%2==1){
+            response="{\"type\":\"text\",\"data\":{\"text\":\"hi!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\",\"speaker\":\"hi\"}}";
+        }
+        else{
+            response="{\"type\":\"text\",\"data\":{\"text\":\"you!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\",\"speaker\":\"you\"}}";
+        }
+        ++clickCounter;
+        QString returnObject=lastCmdObj.value("returnObj").toString();
+        qDebug()<<"returnObj:"<<returnObject;
+        QString returnFunction=lastCmdObj.value("returnFunction").toString();
+        qDebug()<<"returnFunction:"<<returnFunction;
+        if(returnObject.isEmpty()==false&&returnFunction.isEmpty()==false){
+            QObject* obj=messageboard::rootObject->findChild<QObject*>(returnObject);
+            QMetaObject::invokeMethod(obj,returnFunction.toStdString().c_str(),Q_ARG(QString, QString(response)));
+        }
     #endif
     #ifdef __NODEJS__
         QJsonObject *cmdObjHeap=new QJsonObject(cmdObj);

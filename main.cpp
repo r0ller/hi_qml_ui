@@ -3,7 +3,7 @@
 #include <QQuickView>
 #include <QQmlContext>
 #ifdef __NATIVE__
-#include "receiver.h"
+//#include "receiver.h"
 #endif
 #if defined(__ANDROID__) || defined(__NODEJS__)
 #include <emscripten.h>

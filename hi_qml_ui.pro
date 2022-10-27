@@ -15,7 +15,7 @@ DEFINES +=__ANDROID__
 #LIBS += -L../build-qwa_pure_backend-wasm-Debug -lqwa_pure_backend
 #INCLUDEPATH += ../qwa_pure_backend
 
-INCLUDEPATH += ../../emsdk/upstream/emscripten/system/include
+#INCLUDEPATH += ../../emsdk/upstream/emscripten/system/include
 
 CONFIG += c++11
 # You can make your code fail to compile if it uses deprecated APIs.

@@ -32,6 +32,7 @@ private:
     static QObject* rootObject;
     static QJsonObject lastCmdObj;
     QTranslator translator_en;//Is as many translator necessary as many languages we'd like to handle?
+    unsigned int clickCounter=1;
 
 signals:
     void languageChanged();

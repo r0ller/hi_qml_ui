@@ -1,5 +1,5 @@
 import QtQuick 2.15
-//import QtQuick.Window 2.15
+import QtQuick.Window 2.12
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.12
 
@@ -8,6 +8,7 @@ ApplicationWindow {
     objectName: "appMain"
     visible: true
     title: qsTr("hi")
+    color: "#282828"
     function startUpFunction(){
         //This is relevant for the Android code
         //that intercepts console log and this
@@ -23,6 +24,8 @@ ApplicationWindow {
             ToolButton {
                 id: menuButton
                 text: "⋮"
+                //font.family: "Courier"
+                font.pointSize: 20
                 onClicked: {
                     console.log("ToolButton");
                     menu.open();
@@ -30,10 +33,9 @@ ApplicationWindow {
             }
             Label {
                 text: "hi"
-                elide: Label.ElideRight
-                horizontalAlignment: Qt.AlignHCenter
-                verticalAlignment: Qt.AlignVCenter
-                Layout.fillWidth: true
+                //font.family: "Courier"
+                font.pointSize: 20
+                anchors.centerIn: parent
             }
         }
     }
@@ -108,7 +110,7 @@ ApplicationWindow {
 
     ListView{
         id: itemList
-        spacing: 10
+        spacing: 5
         //anchors.fill: parent
         width: parent.width
         anchors.top: parent.top
@@ -117,20 +119,25 @@ ApplicationWindow {
         reuseItems: true
         model: textItemModel
         delegate: Rectangle {
-                    id: background
-                    width: itemList.width/2
+                    id: item
+                    width: itemList.width
                     height: row.height
-                    color: "#bebebe"
-                    border.color: "black"
-                    border.width: 1
-                    radius: 5
+                    color: "#282828"
+                    //border.color: itemColour
+                    //border.width: 1
                     Row {
                         id: row
-                        width: itemList.width
+                        width: parent.width//rowText.width
                         spacing: 0
+                        anchors.centerIn: parent
                         Text {
+                            id: rowText
+                            width: parent.width
                             text: {text:textItem}
-                            color: 'black'
+                            color: itemColour
+                            //font.family: "Courier"
+                            font.pointSize: 20
+                            wrapMode: Text.Wrap
                         }
                     }
                 }
@@ -166,10 +173,13 @@ ApplicationWindow {
                 console.log(msg);
                 let imsg=JSON.parse(msg);
                 if(imsg.type==="text"){
-                    textItemModel.insert(0,{"textItem":imsg.data.text});
+                    if(imsg.data.speaker==="hi"){
+                        textItemModel.insert(0,{"textItem":imsg.data.text,"itemColour":"#FFB000","speaker":imsg.data.speaker});
+                    }
+                    else{
+                        textItemModel.insert(0,{"textItem":imsg.data.text,"itemColour":"#33FF00","speaker":imsg.data.speaker});
+                    }
                     itemList.currentIndex=0;
-                    itemList.currentItem.x=imsg.speaker==="hi"?itemList.x:itemList.x+itemList.width/2;
-                    //itemList.currentItem.x=textItemModel.count%2===1?itemList.x:itemList.x+itemList.width/2;
                 }
                 else if(imsg.type==="script"){
                     //console.log(imsg.data);
