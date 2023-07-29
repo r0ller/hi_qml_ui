@@ -42,13 +42,34 @@ ApplicationWindow {
 
     Menu {
         id: menu
+        objectName: "menu"
 //        x: menuButton.left
 //        y: menuButton.bottom
+        function setLanguage(msg: string){
+            console.log(msg);
+            let imsg=JSON.parse(msg);
+            for(var i=0;i<menu.count;++i){
+                var action=menu.actionAt(i);
+                console.log(action.lid);
+                if(action.lid===imsg.language){
+                    action.checked=true;
+                }
+            }
+        }
         Action {
+            id: us
             text: "English US"
+            property string lid: "en-US"
             checkable: true
             onToggled: {
-                console.log("English US");
+                checked=true;
+                for(var i=0;i<menu.count;++i){
+                    var action=menu.actionAt(i);
+                    console.log(action.text);
+                    if(action.lid!=="en-US"){
+                        action.checked=false;
+                    }
+                }
                 let msg={
                     returnObj: "",
                     returnFunction: "",
@@ -64,10 +85,19 @@ ApplicationWindow {
             }
         }
         Action {
+            id: uk
             text: "English UK"
+            property string lid: "en-UK"
             checkable: true
             onToggled: {
-                console.log("English UK");
+                checked=true;
+                for(var i=0;i<menu.count;++i){
+                    var action=menu.actionAt(i);
+                    console.log(action.text);
+                    if(action.lid!=="en-UK"){
+                        action.checked=false;
+                    }
+                }
                 let msg={
                     returnObj: "",
                     returnFunction: "",
@@ -83,10 +113,19 @@ ApplicationWindow {
             }
         }
         Action {
+            id: hu
             text: "Hungarian"
+            property string lid: "hu-HU"
             checkable: true
             onToggled: {
-                console.log("Hungarian");
+                checked=true;
+                for(var i=0;i<menu.count;++i){
+                    var action=menu.actionAt(i);
+                    console.log(action.text);
+                    if(action.lid!=="hu-HU"){
+                        action.checked=false;
+                    }
+                }
                 let msg={
                     returnObj: "",
                     returnFunction: "",
@@ -105,7 +144,6 @@ ApplicationWindow {
 
     ListModel {
         id: textItemModel
-        objectName: "textItemModel"
     }
 
     ListView{
@@ -149,6 +187,15 @@ ApplicationWindow {
         }
         displaced: Transition {
             NumberAnimation { properties: "x,y"; duration: 400; easing.type: Easing.OutBounce }
+            //https://doc.qt.io/qt-5/qml-qtquick-viewtransition.html
+            //Each newly added item undergoes an add transition, but before the transition can finish
+            //the transition may be interrupted. Due to the interruption, the opacity and scale animations
+            //are not completed, thus producing items with opacity and scale that are below 1.0.
+            //To fix this, the displaced transition should additionally ensure the item properties are set
+            //to the end values specified in the add transition, effectively resetting these values whenever
+            //an item is displaced.
+            NumberAnimation { property: "opacity"; to: 1.0; }
+            NumberAnimation { property: "scale"; to: 1.0; }
         }
 
         MouseArea {

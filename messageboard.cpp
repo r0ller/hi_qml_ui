@@ -121,11 +121,49 @@ void messageboard::refresh() {
 }
 
 void messageboard::callbackMsg(const char* msg){
-    #ifdef __ANDROID__
-    //QJsonObject cmdObj=QJsonDocument::fromJson(QString(msg).toUtf8()).object();
-    QString returnObject=lastCmdObj.value("returnObj").toString();
+    #ifdef __NATIVE__
+    //Not necessary on native, just put here to debug what happens on Android
+    qDebug()<<"callback msg:"<<QString(msg);
+    QString returnObject;
+    QString returnFunction;
+    QJsonObject cmdObj=QJsonDocument::fromJson(QString(msg).toUtf8()).object();
+    auto iCmdObj=cmdObj.find("returnObj");
+    if(iCmdObj!=cmdObj.end()){
+        returnObject=iCmdObj->toString();
+        iCmdObj=cmdObj.find("returnFunction");
+        if(iCmdObj!=cmdObj.end()){
+            returnFunction=iCmdObj->toString();
+        }
+    }
+    else{
+        returnObject=lastCmdObj.value("returnObj").toString();
+        returnFunction=lastCmdObj.value("returnFunction").toString();
+    }
     qDebug()<<"returnObj:"<<returnObject;
-    QString returnFunction=lastCmdObj.value("returnFunction").toString();
+    qDebug()<<"returnFunction:"<<returnFunction;
+    if(returnObject.isEmpty()==false&&returnFunction.isEmpty()==false){
+        QObject* obj=messageboard::rootObject->findChild<QObject*>(returnObject);
+        QMetaObject::invokeMethod(obj,returnFunction.toStdString().c_str(),Q_ARG(QString, QString(msg)));
+    }
+    #endif
+    #ifdef __ANDROID__
+    qDebug()<<"callback msg:"<<QString(msg);
+    QString returnObject;
+    QString returnFunction;
+    QJsonObject cmdObj=QJsonDocument::fromJson(QString(msg).toUtf8()).object();
+    auto iCmdObj=cmdObj.find("returnObj");
+    if(iCmdObj!=cmdObj.end()){
+        returnObject=iCmdObj->toString();
+        iCmdObj=cmdObj.find("returnFunction");
+        if(iCmdObj!=cmdObj.end()){
+            returnFunction=iCmdObj->toString();
+        }
+    }
+    else{
+        returnObject=lastCmdObj.value("returnObj").toString();
+        returnFunction=lastCmdObj.value("returnFunction").toString();
+    }
+    qDebug()<<"returnObj:"<<returnObject;
     qDebug()<<"returnFunction:"<<returnFunction;
     if(returnObject.isEmpty()==false&&returnFunction.isEmpty()==false){
         QObject* obj=messageboard::rootObject->findChild<QObject*>(returnObject);

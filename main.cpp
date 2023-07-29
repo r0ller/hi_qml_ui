@@ -27,11 +27,15 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("msgBoard", &msgBoard);
     engine.load(url);
     msgBoard.setRootObject(engine.rootObjects().first());
+    //Calling callbackMsg on native makes no sense, put here just for debugging
+    //msgBoard.callbackMsg("{\"returnObj\":\"menu\",\"returnFunction\":\"setLanguage\",\"language\":\"English US\"}");
     #ifdef __ANDROID__
     EM_ASM({
         window.onmessage=function(e){
             window.msgPort=e.ports[0];
             //console.log('js:'+e.data);
+            //pass port init message to callbackMsg
+            dynCall('vi',$0,[allocate(intArrayFromString(e.data),'i8',ALLOC_NORMAL)]);
             window.msgPort.onmessage=function(f){
                 //let result=JSON.parse(f.data);
                 //TODO: https://stackoverflow.com/questions/29319208/call-c-function-pointer-from-javascript
