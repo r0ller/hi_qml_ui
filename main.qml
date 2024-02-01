@@ -181,12 +181,14 @@ ApplicationWindow {
                 }
         focus: true
         clip: true
+        //Add-scale and displaced animations are removed as two anims on adding an item broke the ui
+        //after some time on android webview running wasm.
         add: Transition {
-            NumberAnimation { property: "opacity"; from: 0; to: 1.0; duration: 400 }
-            NumberAnimation { property: "scale"; from: 0; to: 1.0; duration: 400 }
+            NumberAnimation { property: "opacity"; from: 0; to: 1.0; duration: 250 }
+            /*NumberAnimation { property: "scale"; from: 0; to: 1.0; duration: 250 }*/
         }
-        displaced: Transition {
-            NumberAnimation { properties: "x,y"; duration: 400; easing.type: Easing.OutBounce }
+        /*displaced: Transition {
+            NumberAnimation { properties: "x,y"; duration: 250; easing.type: Easing.OutBounce }
             //https://doc.qt.io/qt-5/qml-qtquick-viewtransition.html
             //Each newly added item undergoes an add transition, but before the transition can finish
             //the transition may be interrupted. Due to the interruption, the opacity and scale animations
@@ -196,7 +198,7 @@ ApplicationWindow {
             //an item is displaced.
             NumberAnimation { property: "opacity"; to: 1.0; }
             NumberAnimation { property: "scale"; to: 1.0; }
-        }
+        }*/
 
         MouseArea {
             id: mouseArea
@@ -220,6 +222,8 @@ ApplicationWindow {
                 console.log(msg);
                 let imsg=JSON.parse(msg);
                 if(imsg.type==="text"){
+                    itemList.model=0;//Utter hack to force redraw by reassigning the model
+                    itemList.model=textItemModel;
                     if(imsg.data.speaker==="hi"){
                         textItemModel.insert(0,{"textItem":imsg.data.text,"itemColour":"#FFB000","speaker":imsg.data.speaker});
                     }

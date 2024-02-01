@@ -28,8 +28,8 @@ lupdate_only{
 }
 
 SOURCES += \
-        main.cpp \
-        messageboard.cpp
+		main.cpp \
+		messageboard.cpp
 
 RESOURCES += qml.qrc
 #TRANSLATIONS = translation_hu.ts
@@ -46,4 +46,4 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
-    messageboard.h
+	messageboard.h
